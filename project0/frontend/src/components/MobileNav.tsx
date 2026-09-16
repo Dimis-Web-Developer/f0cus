@@ -3,18 +3,24 @@ import { NavLink } from "react-router-dom";
 import dashboard from "../assets/IconsFiles/Neutral/dash.svg";
 import project from "../assets/IconsFiles/Neutral/proj.svg";
 import challenge from "../assets/IconsFiles/Neutral/chall.svg";
-import analytics from "../assets/IconsFiles/Neutral/anal.svg";
 
 import dashboardAccent from "../assets/IconsFiles/Accent/dash-accent.svg";
 import projectAccent from "../assets/IconsFiles/Accent/proj-accent.svg";
 import challengeAccent from "../assets/IconsFiles/Accent/chall-accent.svg";
-import analyticsAccent from "../assets/IconsFiles/Accent/anal-accent.svg";
+
 import Login from "./Login";
 import Register from "./Register";
+import LogOut from "./LogOut";
+
+import { useAuth } from "../context/AuthContext";
 
 // import logo from "../assets/logo.png"
 
 function MobileNav() {
+
+    const { isLoggedIn } = useAuth();
+
+
 const app : {name:string
 }= {
     name :"FOCUS",
@@ -24,23 +30,25 @@ const app : {name:string
     { label: "Dashboard", path: "/dashboard", icon: dashboard, activeIcon: dashboardAccent },
     { label: "Projects", path: "/projects", icon: project, activeIcon: projectAccent },
     { label: "Challenges", path: "/challenges", icon: challenge, activeIcon: challengeAccent },
-    { label: "Analytics", path: "/analytics", icon: analytics, activeIcon: analyticsAccent },
   ];
 
   return (
     <>
-     <div className="flex justify-between py-3 px-3  text-white text-xl bg-black border-b-4 border-blue-600 hover:text-gray-400 md:hidden">
-  <NavLink
-    to="/"
-   
-  >
-{app.name} 
+<div className="flex justify-between py-3  px-3 text-white text-xl bg-black border-b-4 border-blue-600 hover:text-gray-400 md:hidden">
+  <NavLink to="/">
+    {app.name}
+  </NavLink>
 
- </NavLink>
   <div className="ml-auto flex items-center gap-2">
-    <Login />
-    <span className="text-gray-400">/</span>
-    <Register />
+    {isLoggedIn ? (
+      <LogOut />
+    ) : (
+      <>
+        <Login />
+        <span className="text-gray-400">/</span>
+        <Register />
+      </>
+    )}
   </div>
 </div>
 
@@ -51,7 +59,7 @@ const app : {name:string
               key={item.label}
               to={item.path}
               end={item.path === "/"}
-              className="flex flex-col items-center "
+              className="flex flex-col items-center"
             >
               {({ isActive }) => (
                 <>

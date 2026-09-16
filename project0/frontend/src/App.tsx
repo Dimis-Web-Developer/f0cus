@@ -9,9 +9,10 @@ import Home from "./pages/Home";
 import DashBoard from "./pages/DashBoard";
 import Projects from "./pages/Projects";
 import Challenges from "./pages/Challenges";
-import Analytics from "./pages/Analytics";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
+
+import ProtectedRoute from "./components/ProtectedRoute"
 
 function App() {
   return (
@@ -29,10 +30,9 @@ function App() {
           <main className="flex-1 pb-20 md:pb-0">
             <Routes>
               <Route path="/" element={<Home />} />
-              <Route path="/dashboard" element={<DashBoard />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/challenges" element={<Challenges />} />
-              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/dashboard" element={<ProtectedRoute><DashBoard /></ProtectedRoute>} />
+              <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+              <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
             </Routes>
