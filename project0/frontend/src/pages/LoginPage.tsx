@@ -8,7 +8,6 @@ function LoginPage() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-
   const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -44,55 +43,103 @@ function LoginPage() {
       }
 
       login();
-
       navigate("/dashboard");
+
     } catch (error) {
       setError("Unable to connect to server");
     }
   };
 
   return (
-    <div className="flex flex-col mx-auto m-32 md:w-1/2">
-      <h1 className="text-2xl text-center font-bold py-6">
-        Login to Focus
-      </h1>
+    <main className="min-h-screen flex items-center justify-center px-6">
+      
+      <div className="w-full max-w-md bg-white border border-slate-200 rounded-xl shadow-sm p-8">
 
-      <form
-        className="flex flex-col gap-4 p-5 items-center"
-        onSubmit={handleLogin}
-      >
-        {error && <p className="text-red-500">{error}</p>}
+        <h1 className="text-3xl text-slate-900 text-center font-bold mb-2">
+          Welcome Back
+        </h1>
 
-        <div className="flex items-stretch">
-          <label className="w-40">Email</label>
+        <p className="text-slate-500 text-center mb-8">
+          Login to continue your Focus journey
+        </p>
 
-          <input
-            className="border-2 border-gray-300 rounded-md px-5 py-1 hover:border-blue-600 bg-blue-200 focus:outline-none focus:ring-1"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-
-        <div className="flex items-center">
-          <label className="w-40">Password</label>
-
-          <input
-            className="border-2 border-gray-300 rounded-md px-5 py-1 hover:border-blue-600 bg-blue-200 focus:outline-none focus:ring-1"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        <button
-          className="bg-black text-gray-400 p-2 rounded-lg cursor-pointer w-1/2"
-          type="submit"
+        <form
+          className="flex flex-col gap-5"
+          onSubmit={handleLogin}
         >
-          Login
-        </button>
-      </form>
-    </div>
+
+          {error && (
+            <p className="text-red-500 text-sm text-center">
+              {error}
+            </p>
+          )}
+
+          <div className="flex flex-col gap-2">
+            <label className="text-slate-700 font-medium">
+              Email
+            </label>
+
+            <input
+              className="
+                w-full
+                border border-slate-300
+                rounded-lg
+                px-4 py-3
+                focus:outline-none
+                focus:border-blue-600
+                focus:ring-1
+                focus:ring-blue-600
+              "
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-slate-700 font-medium">
+              Password
+            </label>
+
+            <input
+              className="
+                w-full
+                border border-slate-300
+                rounded-lg
+                px-4 py-3
+                focus:outline-none
+                focus:border-blue-600
+                focus:ring-1
+                focus:ring-blue-600
+              "
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          <button
+            className="
+              w-full
+              bg-blue-600
+              hover:bg-blue-700
+              text-white
+              font-medium
+              py-3
+              rounded-lg
+              cursor-pointer
+              transition
+            "
+            type="submit"
+          >
+            Login
+          </button>
+
+        </form>
+      </div>
+    </main>
   );
 }
 

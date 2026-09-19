@@ -7,7 +7,7 @@ function TopBar() {
   const { isLoggedIn } = useAuth();
 
   return (
-    <div className="hidden md:flex h-12 w-full items-center justify-end bg-black border-t-4 border-blue-600 px-6">
+    <div className="hidden md:flex h-12 w-full fixed items-center justify-end bg-slate-900 border-t-4 border-blue-600 px-6">
       <div className="flex items-center gap-3">
         {isLoggedIn ? (
           <LogOut />

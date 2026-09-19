@@ -34,8 +34,7 @@ const app : {name:string
 
   return (
     <>
-<div className="flex justify-between py-3  px-3 text-white text-xl bg-black border-b-4 border-blue-600 hover:text-gray-400 md:hidden">
-  <NavLink to="/">
+<div className="flex fixed top-0 left-0 right-0 z-50 w-full justify-between py-3 px-3 text-white text-xl bg-slate-900 border-b-4 border-blue-600 hover:text-gray-400 md:hidden">  <NavLink to="/">
     {app.name}
   </NavLink>
 
@@ -52,8 +51,8 @@ const app : {name:string
   </div>
 </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0">
-        <nav className="bg-black border-t-4 border-blue-600 flex justify-around py-2">
+<div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+          <nav className="bg-slate-900 border-t-4 border-blue-600 flex justify-around py-2">
           {menuItems.map((item) => (
             <NavLink
               key={item.label}
