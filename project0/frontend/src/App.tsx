@@ -12,35 +12,62 @@ import Challenges from "./pages/Challenges";
 import RegisterPage from "./pages/RegisterPage";
 import LoginPage from "./pages/LoginPage";
 
-import ProtectedRoute from "./components/ProtectedRoute"
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="flex min-h-screen">
+      <div className="min-h-dvh">
+        {/* Fixed desktop sidebar */}
         <DeskTNav />
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          {/* Mobile header and bottom navigation */}
-          <MobileNav />
+        {/* Fixed mobile navigation */}
+        <MobileNav />
 
-          {/* Desktop top bar */}
-          <TopBar />
+        {/* Fixed desktop top bar */}
+        <TopBar />
 
-          <main className="flex-1 pb-20 md:pb-0">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/dashboard" element={<ProtectedRoute><DashBoard /></ProtectedRoute>} />
-              <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
-              <Route path="/challenges" element={<ProtectedRoute><Challenges /></ProtectedRoute>} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-            </Routes>
-          </main>
+        {/* Main page content */}
+      <main className="min-h-dvh min-w-0 px-3 pt-16 pb-20 sm:px-4 md:ml-40 md:px-6 md:pt-12 md:pb-14">
 
-          {/* Desktop footer */}
-          <Footer />
-        </div>
+          <Routes>
+            <Route path="/" element={<Home />} />
+
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashBoard />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/projects"
+              element={
+                <ProtectedRoute>
+                  <Projects />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/challenges"
+              element={
+                <ProtectedRoute>
+                  <Challenges />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="/login" element={<LoginPage />} />
+
+            <Route path="/register" element={<RegisterPage />} />
+          </Routes>
+        </main>
+
+        {/* Fixed desktop footer */}
+        <Footer />
       </div>
     </BrowserRouter>
   );

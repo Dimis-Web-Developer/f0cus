@@ -7,6 +7,8 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -51,16 +53,14 @@ function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
-      
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-xl shadow-sm p-8">
+<div className="flex w-full min-h-[calc(100dvh-9rem)] items-center justify-center px-1 py-4 md:min-h-[calc(100dvh-6.5rem)]">  <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
 
-        <h1 className="text-3xl text-slate-900 text-center font-bold mb-2">
-          Welcome Back
+        <h1 className=" text-3xl whitespace-nowrap text-slate-900 text-center font-bold mb-2">
+       Welcome to Focus!
         </h1>
 
-        <p className="text-slate-500 text-center mb-8">
-          Login to continue your Focus journey
+        <p className="text-sm md:text-base text-slate-500 text-center mb-8">
+          Login to continue your journey
         </p>
 
         <form
@@ -139,7 +139,7 @@ function LoginPage() {
 
         </form>
       </div>
-    </main>
+    </div>
   );
 }
 

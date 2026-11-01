@@ -35,7 +35,7 @@ function DeskTNav() {
   ];
 
   return (
-<aside className="hidden md:flex fixed top-0 left-0 h-screen w-40  z-50 shrink-0 flex-col border-y-4 border-l-4 border-blue-600 bg-slate-900">      
+<aside className="hidden md:flex fixed top-0 left-0 z-50 h-screen w-40 shrink-0 flex-col border-y-4 border-l-4 border-blue-600 bg-slate-900 ">      
   <nav className="flex h-full flex-col gap-3 px-2 pt-32 text-gray-400 w-36">
         {menuItems.map((item) => (
           <NavLink

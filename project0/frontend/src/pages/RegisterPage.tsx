@@ -62,14 +62,13 @@ function RegisterPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6 py-20">
-      <div className="w-full max-w-md bg-white border border-slate-200 rounded-xl shadow-sm p-8">
+<div className="flex w-full min-h-[calc(100dvh-9rem)] items-center justify-center px-1 py-4 md:min-h-[calc(100dvh-6.5rem)]">  <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
 
-        <h1 className="text-xl md:text-3xl text-slate-900 text-center font-bold mb-2">
-          Create your Focus account
+        <h1 className="text-3xl text-slate-900 text-center font-bold mb-2">
+          Create an account
         </h1>
 
-        <p className="text-slate-500 text-sm text-center mb-8">
+        <p className="text-slate-500 text-sm  text-center mb-8">
           Start building better habits and completing your challenges
         </p>
 
@@ -147,7 +146,7 @@ function RegisterPage() {
           </button>
         </form>
       </div>
-    </main>
+    </div>
   );
 }
 

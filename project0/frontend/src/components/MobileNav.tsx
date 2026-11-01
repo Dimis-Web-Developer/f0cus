@@ -51,8 +51,8 @@ const app : {name:string
   </div>
 </div>
 
-<div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
-          <nav className="bg-slate-900 border-t-4 border-blue-600 flex justify-around py-2">
+      <div className="md:hidden fixed bottom-0 left-0 right-0">
+        <nav className="bg-slate-900 border-t-4 border-blue-600 flex justify-around py-2">
           {menuItems.map((item) => (
             <NavLink
               key={item.label}

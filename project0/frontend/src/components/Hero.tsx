@@ -1,35 +1,33 @@
+import { Link } from "react-router-dom";
+
 type HeroProps = {
   title: string;
   description: string;
   buttonText: string;
 };
 
-function Hero({
-  title,
-  description,
-  buttonText,
-}: HeroProps) {
+function Hero({ title, description, buttonText }: HeroProps) {
   return (
-    <section className=" min-h-[60vh] md:min-h-[40vh] flex items-center justify-center px-6">
-      <div className=" max-w-3xl text-center">
-        <h1 className=" text-4xl md:text-6xl font-bold md:mb-4 mb-3 text-slate-700">
+    <section className="rounded-2xl  bg-slate-900 px-5 py-12 text-center sm:px-8 sm:py-16 lg:mt-3 lg:py-20">
+      <div className="mx-auto max-w-3xl">
+        <span className="mb-5 inline-block rounded-full bg-blue-500/15 px-4 py-2 text-xs font-semibold tracking-wider text-blue-300">
+          YOUR GOALS. YOUR PROGRESS.
+        </span>
+
+        <h1 className="mb-5 text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-5xl">
           {title}
         </h1>
 
-        <p className="text-lg text-slate-500 mb-8">
+        <p className="mx-auto mb-8 max-w-xl text-base leading-relaxed text-slate-300 sm:text-lg">
           {description}
         </p>
 
-        <button className=" bg-blue-600
-    hover:bg-blue-700
-    text-white
-    px-6
-    py-3
-    rounded-lg
-    transition
-    cursor-pointer">
-          {buttonText}
-        </button>
+        <Link
+          to="/register"
+          className="inline-block rounded-lg bg-blue-600 px-7 py-3 font-semibold text-white transition hover:bg-blue-700"
+        >
+          {buttonText} →
+        </Link>
       </div>
     </section>
   );
