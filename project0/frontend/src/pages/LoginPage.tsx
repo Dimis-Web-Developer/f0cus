@@ -44,8 +44,14 @@ function LoginPage() {
         return;
       }
 
-      login();
-      navigate("/dashboard");
+     
+if (typeof data.token !== "string" || !data.token) {
+  setError("Login response did not include a token");
+  return;
+}
+
+login(data.token);
+navigate("/dashboard");
 
     } catch (error) {
       setError("Unable to connect to server");
