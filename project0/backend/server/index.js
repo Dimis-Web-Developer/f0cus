@@ -1,74 +1,84 @@
+
 const express = require("express");
 const { MongoClient, ObjectId } = require("mongodb");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const requireAuth = require("./middleware/requireAuth");
-const cors = require('cors')
+const createChallengeRouter = require("../server/routes/challengeRoute")
+const cors = require("cors");
+
 require("dotenv").config();
 
 const app = express();
-
-app.use(cors({
-  origin: "http://localhost:5173"
-}));
-
 const PORT = 8080;
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
+
+app.use(express.json());
 
 const client = new MongoClient(process.env.MONGODB_URI);
 
-let userCollection, goalsCollection, projectsCollection, projectTasksCollection;
-app.use(express.json());
+let userCollection;
+let goalsCollection;
+let projectsCollection;
+let projectTasksCollection;
 
+// HOME
 app.get("/", (req, res) => {
   res.send("<p>Hello from Node backend</p>");
 });
 
+// REGISTER
 app.post("/api/auth/register", async (req, res) => {
-  try{
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  if (!name || !email || !password) {
-    return res.status(400).json({
-      message: "All fields are required",
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await userCollection.findOne({
+      email: normalizedEmail,
     });
-  }
 
-  const normalizedEmail = email.trim().toLowerCase();
+    if (existingUser) {
+      return res.status(409).json({
+        message: "User already exists",
+      });
+    }
 
-  const existingUser = await userCollection.findOne({ 
-    email:normalizedEmail
-  });
+    const hashPassword = await bcrypt.hash(password, 10);
 
-  if(existingUser) {
-    return res.status(409).json({
-      message: "User already exists",
+    const newUser = {
+      name,
+      email: normalizedEmail,
+      password: hashPassword,
+      createdAt: new Date(),
+    };
+
+    await userCollection.insertOne(newUser);
+
+    return res.status(201).json({
+      message: "Account created successfully",
     });
-  }
+  } catch (error) {
+    console.error("Register error:", error);
 
-  const hashPassword = await bcrypt.hash(password,10)
-
-  const newUser ={
-    name,
-    email: normalizedEmail,
-    password: hashPassword,
-    createdAt: new Date()
-  };
-
-  await userCollection.insertOne(newUser)
-
-  res.status(201).json({
-    message: "Account created successfully",
-  })
-  }
-  catch(error){
-    console.error(error);
-    res.status(500).json({
+    return res.status(500).json({
       message: "Something went wrong",
     });
   }
 });
 
-
+// LOGIN
 app.post("/api/auth/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -131,38 +141,15 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-
-async function connectDB() {
-  try {
-    await client.connect();
-
-    const db = client.db("focusDB");
-
-    userCollection = db.collection("focusUsers");
-    goalsCollection = db.collection("focusGoals");
-    projectsCollection = db.collection("projects");
-    projectTasksCollection = db.collection("projectTasks");
-
-    console.log("Connected to MongoDB");
-
-    app.listen(PORT, () => {
-      console.log(
-        `Backend running at http://localhost:${PORT}`
-      );
-    });
-  } catch (error) {
-    console.error("MongoDB connection failed:", error);
-    process.exit(1);
-  }
-}
-
+// AUTHENTICATED USER
 app.get("/api/auth/me", requireAuth, async (req, res) => {
-  res.status(200).json({
+  return res.status(200).json({
     message: "You are authenticated",
     userId: req.user.id,
   });
 });
 
+// CREATE GOAL
 app.post("/api/goals", requireAuth, async (req, res) => {
   try {
     const { title } = req.body;
@@ -198,6 +185,7 @@ app.post("/api/goals", requireAuth, async (req, res) => {
   }
 });
 
+// GET GOALS
 app.get("/api/goals", requireAuth, async (req, res) => {
   try {
     const goals = await goalsCollection
@@ -218,7 +206,7 @@ app.get("/api/goals", requireAuth, async (req, res) => {
   }
 });
 
-
+// UPDATE GOAL
 app.patch("/api/goals/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
@@ -247,9 +235,7 @@ app.patch("/api/goals/:id", requireAuth, async (req, res) => {
           updatedAt: new Date(),
         },
       },
-      {
-        returnDocument: "after",
-      }
+      { returnDocument: "after" }
     );
 
     if (!result) {
@@ -271,6 +257,7 @@ app.patch("/api/goals/:id", requireAuth, async (req, res) => {
   }
 });
 
+// DELETE GOAL
 app.delete("/api/goals/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
@@ -304,11 +291,11 @@ app.delete("/api/goals/:id", requireAuth, async (req, res) => {
   }
 });
 
+// CREATE PROJECT
 app.post("/api/projects", requireAuth, async (req, res) => {
   try {
     const { title, description } = req.body;
 
-    // Validate project title
     if (typeof title !== "string" || !title.trim()) {
       return res.status(400).json({
         message: "Project title is required",
@@ -324,7 +311,6 @@ app.post("/api/projects", requireAuth, async (req, res) => {
       });
     }
 
-    // Create a new project
     const newProject = {
       userId: req.user.id,
       title: title.trim(),
@@ -334,7 +320,6 @@ app.post("/api/projects", requireAuth, async (req, res) => {
       createdAt: new Date(),
     };
 
-    // Save to MongoDB
     const result = await projectsCollection.insertOne(newProject);
 
     return res.status(201).json({
@@ -344,7 +329,6 @@ app.post("/api/projects", requireAuth, async (req, res) => {
         _id: result.insertedId,
       },
     });
-
   } catch (error) {
     console.error("Create project error:", error);
 
@@ -354,9 +338,9 @@ app.post("/api/projects", requireAuth, async (req, res) => {
   }
 });
 
+// GET PROJECTS
 app.get("/api/projects", requireAuth, async (req, res) => {
   try {
-    // Retrieve projects belonging to the logged-in user
     const projects = await projectsCollection
       .find({ userId: req.user.id })
       .sort({ createdAt: -1 })
@@ -366,7 +350,6 @@ app.get("/api/projects", requireAuth, async (req, res) => {
       message: "Projects retrieved successfully",
       projects,
     });
-
   } catch (error) {
     console.error("Get projects error:", error);
 
@@ -376,6 +359,7 @@ app.get("/api/projects", requireAuth, async (req, res) => {
   }
 });
 
+// UPDATE PROJECT
 app.patch("/api/projects/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
@@ -413,6 +397,7 @@ app.patch("/api/projects/:id", requireAuth, async (req, res) => {
           message: "Invalid project status",
         });
       }
+
       updates.status = status;
       updates.progress = status === "Completed" ? 100 : 0;
     }
@@ -457,18 +442,17 @@ app.patch("/api/projects/:id", requireAuth, async (req, res) => {
   }
 });
 
+// DELETE PROJECT
 app.delete("/api/projects/:id", requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Validate MongoDB project ID
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
         message: "Invalid project ID",
       });
     }
 
-    // Delete only a project owned by the logged-in user
     const result = await projectsCollection.deleteOne({
       _id: new ObjectId(id),
       userId: req.user.id,
@@ -483,7 +467,6 @@ app.delete("/api/projects/:id", requireAuth, async (req, res) => {
     return res.status(200).json({
       message: "Project deleted successfully",
     });
-
   } catch (error) {
     console.error("Delete project error:", error);
 
@@ -493,7 +476,7 @@ app.delete("/api/projects/:id", requireAuth, async (req, res) => {
   }
 });
 
-
+// CREATE PROJECT TASK
 app.post(
   "/api/projects/:projectId/tasks",
   requireAuth,
@@ -502,21 +485,18 @@ app.post(
       const { projectId } = req.params;
       const { title } = req.body;
 
-      // Validate project ID
       if (!ObjectId.isValid(projectId)) {
         return res.status(400).json({
           message: "Invalid project ID",
         });
       }
 
-      // Validate task title
       if (typeof title !== "string" || !title.trim()) {
         return res.status(400).json({
           message: "Task title is required",
         });
       }
 
-      // Make sure the project belongs to the logged-in user
       const project = await projectsCollection.findOne({
         _id: new ObjectId(projectId),
         userId: req.user.id,
@@ -528,7 +508,6 @@ app.post(
         });
       }
 
-      // Create a task linked to this project
       const newTask = {
         projectId: project._id,
         userId: req.user.id,
@@ -537,9 +516,7 @@ app.post(
         createdAt: new Date(),
       };
 
-      const result = await projectTasksCollection.insertOne(
-        newTask
-      );
+      const result = await projectTasksCollection.insertOne(newTask);
 
       return res.status(201).json({
         message: "Project task created successfully",
@@ -558,6 +535,7 @@ app.post(
   }
 );
 
+// GET PROJECT TASKS
 app.get(
   "/api/projects/:projectId/tasks",
   requireAuth,
@@ -565,14 +543,12 @@ app.get(
     try {
       const { projectId } = req.params;
 
-      // Validate the project ID
       if (!ObjectId.isValid(projectId)) {
         return res.status(400).json({
           message: "Invalid project ID",
         });
       }
 
-      // Check that the project belongs to the logged-in user
       const project = await projectsCollection.findOne({
         _id: new ObjectId(projectId),
         userId: req.user.id,
@@ -584,7 +560,6 @@ app.get(
         });
       }
 
-      // Retrieve tasks for this specific project
       const tasks = await projectTasksCollection
         .find({
           projectId: project._id,
@@ -607,7 +582,7 @@ app.get(
   }
 );
 
-
+// UPDATE PROJECT TASK
 app.patch(
   "/api/projects/:projectId/tasks/:taskId",
   requireAuth,
@@ -616,7 +591,6 @@ app.patch(
       const { projectId, taskId } = req.params;
       const { completed } = req.body;
 
-      // Validate MongoDB IDs
       if (
         !ObjectId.isValid(projectId) ||
         !ObjectId.isValid(taskId)
@@ -626,14 +600,12 @@ app.patch(
         });
       }
 
-      // Validate completed value
       if (typeof completed !== "boolean") {
         return res.status(400).json({
           message: "Completed must be true or false",
         });
       }
 
-      // Verify that the project belongs to this user
       const project = await projectsCollection.findOne({
         _id: new ObjectId(projectId),
         userId: req.user.id,
@@ -645,7 +617,6 @@ app.patch(
         });
       }
 
-      // Update only a task belonging to this project and user
       const result = await projectTasksCollection.updateOne(
         {
           _id: new ObjectId(taskId),
@@ -686,6 +657,7 @@ app.patch(
   }
 );
 
+// DELETE PROJECT TASK
 app.delete(
   "/api/projects/:projectId/tasks/:taskId",
   requireAuth,
@@ -693,7 +665,6 @@ app.delete(
     try {
       const { projectId, taskId } = req.params;
 
-      // Validate MongoDB IDs
       if (
         !ObjectId.isValid(projectId) ||
         !ObjectId.isValid(taskId)
@@ -703,7 +674,6 @@ app.delete(
         });
       }
 
-      // Verify project ownership
       const project = await projectsCollection.findOne({
         _id: new ObjectId(projectId),
         userId: req.user.id,
@@ -715,7 +685,6 @@ app.delete(
         });
       }
 
-      // Delete only a task belonging to this project
       const result = await projectTasksCollection.deleteOne({
         _id: new ObjectId(taskId),
         projectId: project._id,
@@ -740,5 +709,36 @@ app.delete(
     }
   }
 );
+
+// CONNECT MONGODB AND START SERVER
+async function connectDB() {
+  try {
+    await client.connect();
+
+    const db = client.db("focusDB");
+
+    userCollection = db.collection("focusUsers");
+    goalsCollection = db.collection("focusGoals");
+    projectsCollection = db.collection("projects");
+    projectTasksCollection = db.collection("projectTasks");
+
+    // CHALLENGES ROUTES
+    app.use(
+      "/api/challenges",
+      createChallengeRouter(db, requireAuth)
+    );
+
+    console.log("Connected to MongoDB");
+
+    app.listen(PORT, () => {
+      console.log(
+        `Backend running at http://localhost:${PORT}`
+      );
+    });
+  } catch (error) {
+    console.error("MongoDB connection failed:", error);
+    process.exit(1);
+  }
+}
 
 connectDB();
