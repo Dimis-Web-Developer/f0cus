@@ -23,6 +23,12 @@ type DailyGoal = {
   completed: boolean;
 };
 
+type WeeklyActivity = {
+  day: string;
+  completed: boolean;
+};
+
+// Demonstration statistics
 const sampleStats: Stat[] = [
   {
     title: "Active Challenges",
@@ -50,6 +56,7 @@ const sampleStats: Stat[] = [
   },
 ];
 
+// Demonstration challenges
 const challenges: Challenge[] = [
   {
     title: "Complete My Portfolio",
@@ -63,7 +70,8 @@ const challenges: Challenge[] = [
   },
 ];
 
-const weeklyActivity = [
+// Demonstration weekly activity
+const weeklyActivity: WeeklyActivity[] = [
   { day: "Mon", completed: true },
   { day: "Tue", completed: true },
   { day: "Wed", completed: true },
@@ -73,6 +81,7 @@ const weeklyActivity = [
   { day: "Sun", completed: false },
 ];
 
+// Initial demonstration goals
 const initialGoals: DailyGoal[] = [
   {
     id: 1,
@@ -98,21 +107,33 @@ function DashboardPreview() {
   const [dailyGoals, setDailyGoals] =
     useState<DailyGoal[]>(initialGoals);
 
+  // Count completed daily goals
   const completedGoals = dailyGoals.filter(
     (goal) => goal.completed
   ).length;
 
-  const completionRate = dailyGoals.length
-    ? Math.round(
-        (completedGoals / dailyGoals.length) * 100
-      )
-    : 0;
+  // Calculate completion percentage
+  const completionRate =
+    dailyGoals.length > 0
+      ? Math.round(
+          (completedGoals / dailyGoals.length) * 100
+        )
+      : 0;
 
+  // Count completed days
+  const completedDays = weeklyActivity.filter(
+    (activity) => activity.completed
+  ).length;
+
+  // Toggle demonstration goal completion
   const toggleGoal = (id: number) => {
     setDailyGoals((previous) =>
       previous.map((goal) =>
         goal.id === id
-          ? { ...goal, completed: !goal.completed }
+          ? {
+              ...goal,
+              completed: !goal.completed,
+            }
           : goal
       )
     );
@@ -121,7 +142,6 @@ function DashboardPreview() {
   return (
     <section className="w-full py-12 sm:py-16">
       <div className="mx-auto w-full max-w-6xl">
-
         {/* Section heading */}
         <div className="mb-8 text-center">
           <span className="text-sm font-semibold uppercase tracking-widest text-blue-600">
@@ -139,9 +159,8 @@ function DashboardPreview() {
         </div>
 
         {/* Main dashboard preview */}
-        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-blue-600/10">
-
-          {/* Header */}
+        <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg shadow-slate-200/60">
+          {/* Dashboard header */}
           <div className="bg-slate-900 px-5 py-7 sm:px-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -150,7 +169,7 @@ function DashboardPreview() {
                 </p>
 
                 <h3 className="mt-2 text-2xl font-bold text-white">
-                  Welcome back!
+                  Welcome to Focus!
                 </h3>
 
                 <p className="mt-1 text-sm text-slate-300">
@@ -159,14 +178,13 @@ function DashboardPreview() {
               </div>
 
               <span className="rounded-full border border-blue-400/30 bg-blue-500/15 px-3 py-1 text-xs font-medium text-blue-200">
-                Interactive preview
+                Interactive demo
               </span>
             </div>
           </div>
 
           <div className="space-y-8 p-4 sm:p-6 lg:p-8">
-
-            {/* Stats */}
+            {/* Statistics */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {sampleStats.map((stat) => (
                 <div
@@ -186,7 +204,9 @@ function DashboardPreview() {
                     </span>
                   </div>
 
-                  <p className={`mt-4 text-3xl font-bold ${stat.accent}`}>
+                  <p
+                    className={`mt-4 text-3xl font-bold ${stat.accent}`}
+                  >
                     {stat.value}
                   </p>
 
@@ -206,7 +226,7 @@ function DashboardPreview() {
                   </h4>
 
                   <p className="mt-1 text-sm text-slate-500">
-                    Your daily goals and activities
+                    Try completing a goal to see your progress.
                   </p>
                 </div>
 
@@ -232,12 +252,14 @@ function DashboardPreview() {
                 >
                   <div
                     className="h-full rounded-full bg-blue-600 transition-all duration-300"
-                    style={{ width: `${completionRate}%` }}
+                    style={{
+                      width: `${completionRate}%`,
+                    }}
                   />
                 </div>
               </div>
 
-              {/* Daily task list */}
+              {/* Daily goal list */}
               <div className="mt-5 space-y-3">
                 {dailyGoals.map((goal) => (
                   <label
@@ -247,9 +269,8 @@ function DashboardPreview() {
                     <input
                       type="checkbox"
                       checked={goal.completed}
-                      disabled 
                       onChange={() => toggleGoal(goal.id)}
-                      className="h-5 w-5 shrink-0 accent-blue-600"
+                      className="h-5 w-5 shrink-0 cursor-pointer accent-blue-600"
                     />
 
                     <div className="min-w-0 flex-1">
@@ -275,16 +296,21 @@ function DashboardPreview() {
                           : "bg-slate-100 text-slate-600"
                       }`}
                     >
-                      {goal.completed ? "Completed" : "Pending"}
+                      {goal.completed
+                        ? "Completed"
+                        : "Pending"}
                     </span>
                   </label>
                 ))}
               </div>
 
+              {/* Automation preview */}
               <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
                 <div className="flex items-center gap-2 text-sm text-slate-500">
                   <span aria-hidden="true">↻</span>
-                  <span>Recurring goals and reminders coming soon</span>
+                  <span>
+                    Recurring goals and reminders coming soon
+                  </span>
                 </div>
 
                 <span className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-700">
@@ -295,7 +321,6 @@ function DashboardPreview() {
 
             {/* Challenges and weekly activity */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-
               {/* Challenges */}
               <div className="min-w-0 lg:col-span-2">
                 <div className="mb-4">
@@ -312,7 +337,7 @@ function DashboardPreview() {
                   {challenges.map((challenge) => (
                     <div
                       key={challenge.title}
-                      className="rounded-2xl border border-slate-200 p-5"
+                      className="rounded-2xl border border-slate-200 p-5 transition-colors hover:border-blue-200"
                     >
                       <div className="mb-4 flex flex-wrap items-start justify-between gap-2">
                         <div>
@@ -339,7 +364,7 @@ function DashboardPreview() {
                         aria-valuemax={100}
                       >
                         <div
-                          className="h-full rounded-full bg-blue-600 transition-all"
+                          className="h-full rounded-full bg-blue-600 transition-all duration-300"
                           style={{
                             width: `${challenge.progress}%`,
                           }}
@@ -390,7 +415,7 @@ function DashboardPreview() {
 
                 <div className="mt-6 border-t border-slate-200 pt-4">
                   <p className="text-sm font-semibold text-slate-800">
-                    4 of 7 days completed
+                    {completedDays} of {weeklyActivity.length} days completed
                   </p>
 
                   <p className="mt-1 text-xs text-slate-500">
@@ -398,8 +423,14 @@ function DashboardPreview() {
                   </p>
                 </div>
               </div>
-
             </div>
+
+            {/* Demo information */}
+            <p className="text-center text-xs text-slate-400">
+              This is a demonstration dashboard.
+              Changes to daily goals are temporary.
+              Statistics and challenges use sample data.
+            </p>
           </div>
         </div>
       </div>

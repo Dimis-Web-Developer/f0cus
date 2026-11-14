@@ -1,19 +1,25 @@
+
 import Hero from "../components/Hero";
-import { features } from "../data/features";
 import FeaturedCard from "../components/FeaturedCard";
-import HowItWorks from "../components/HowItWorks";
 import Preview from "../components/DashBoardReview";
+import HowItWorks from "../components/HowItWorks";
+import { features } from "../data/features";
 
 function Home() {
   return (
-    <div className="w-full">
+    <main className="w-full">
+      {/* Hero section */}
       <Hero
         title="Face Open Challenges Until Success Achieved"
         description="Turn your goals into challenges, stay consistent and track your progress."
         buttonText="Get Started"
       />
 
-<section className="flex w-full flex-col justify-center gap-3 py-4 sm:gap-6 sm:py-6 lg:flex-row">
+      {/* Features section */}
+      <section
+        aria-label="Focus features"
+        className="grid grid-cols-1 gap-5 py-8 md:grid-cols-2 lg:grid-cols-3"
+      >
         {features.map((feature) => (
           <FeaturedCard
             key={feature.id}
@@ -22,11 +28,18 @@ function Home() {
             icon={feature.icon}
           />
         ))}
-      </section> 
-       <Preview/>
-      <HowItWorks/>
-    
-    </div>
+      </section>
+
+      {/* Dashboard preview */}
+      <section aria-label="Dashboard preview">
+        <Preview />
+      </section>
+
+      {/* How Focus works */}
+      <section aria-label="How Focus works">
+        <HowItWorks />
+      </section>
+    </main>
   );
 }
 
